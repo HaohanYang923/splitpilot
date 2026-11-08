@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: splitpilot
+    runtime: python
+    buildCommand: "true"
+    startCommand: "python3 app.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
