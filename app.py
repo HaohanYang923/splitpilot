@@ -52,6 +52,31 @@ import urllib.request
 import urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+def _load_dotenv():
+    """Load KEY=VALUE lines from a .env file next to this file.
+
+    Real environment variables win; the file is only a convenience so
+    `python3 app.py` picks up PayPal credentials without exports.
+    """
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(path):
+        return
+    for raw in open(path):
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        value = value.strip()
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+_load_dotenv()
+
 PAYPAL_BASE = "https://api-m.sandbox.paypal.com"
 PORT = int(os.environ.get("PORT", "8000"))
 CURRENCIES = {"USD": "$", "CAD": "$", "EUR": "€", "GBP": "£"}
