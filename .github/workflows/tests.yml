@@ -1,0 +1,20 @@
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run tests (standard library only, no installs)
+        run: python3 tests/test_split.py
+      - name: Smoke test the server
+        run: |
+          PORT=8139 SPLITPILOT_DATA=/tmp/sp-state.json python3 app.py &
+          sleep 2
+          curl -f http://localhost:8139/health
+          curl -f http://localhost:8139/ > /dev/null
